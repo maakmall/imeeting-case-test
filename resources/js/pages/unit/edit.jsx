@@ -1,8 +1,17 @@
 import { useForm, Head, Form } from "@inertiajs/react";
 import Layout from "../../layouts/main";
+import Breadcrumbs from "../../components/breadcrumbs";
+import Button from "../../components/button";
+import { FormInput } from "../../components/form-input";
+import { ChevronLeft } from "lucide-react";
+
+const breadcrumbs = [
+    { label: "Daftar Unit", href: "/units" },
+    { label: "Edit Unit" },
+];
 
 export default function Edit({ unit }) {
-    const { data, setData, processing, errors } = useForm({
+    const { data, setData } = useForm({
         name: unit.name || "",
         meeting_rooms: unit.meeting_rooms || [],
     });
@@ -24,8 +33,14 @@ export default function Edit({ unit }) {
     return (
         <Layout>
             <Head title="Edit Unit" />
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold">Edit Unit</h1>
+            <div className="flex items-start gap-4 mb-8">
+                <Button href="/units" className="!p-3">
+                    <ChevronLeft className="text-white size-4" />
+                </Button>
+                <div>
+                    <h1 className="text-[28px] font-bold text-dark">Unit</h1>
+                    <Breadcrumbs items={breadcrumbs} />
+                </div>
             </div>
 
             <Form
@@ -33,98 +48,95 @@ export default function Edit({ unit }) {
                 method="PUT"
                 className="space-y-6"
             >
-                {/* Nama Unit */}
-                <div>
-                    <label className="block mb-1 font-medium">Nama Unit</label>
-                    <input
-                        type="text"
-                        value={data.name}
-                        name="name"
-                        onChange={(e) => setData("name", e.target.value)}
-                        className="w-full border rounded p-2"
-                    />
-                    {errors.name && (
-                        <div className="text-red-500 text-sm">
-                            {errors.name}
-                        </div>
-                    )}
-                </div>
+                {({ processing, errors }) => (
+                    <>
+                        <FormInput
+                            label="Nama Unit"
+                            error={errors.name}
+                            name="name"
+                            value={data.name}
+                            onChange={(e) => {
+                                setData('name', e.target.value)
+                            }}
+                        />
+                        <label className="block mb-2 font-medium">
+                            Ruang Rapat
+                        </label>
 
-                {/* Meeting Rooms */}
-                <div>
-                    <label className="block mb-2 font-medium">
-                        Ruang Rapat
-                    </label>
-                    {data.meeting_rooms.map((room, index) => (
-                        <div
-                            key={index}
-                            className="flex items-center gap-3 mb-3"
-                        >
-                            <input
-                                type="text"
-                                placeholder="Nama Ruang"
-                                value={room.name}
-                                name={`meeting_rooms[${index}][name]`}
-                                onChange={(e) =>
-                                    setData(
-                                        "meeting_rooms",
-                                        data.meeting_rooms.map((r, i) =>
-                                            i === index
-                                                ? { ...r, name: e.target.value }
-                                                : r
-                                        )
-                                    )
-                                }
-                                className="flex-1 border rounded p-2"
-                            />
-                            <input
-                                type="number"
-                                placeholder="Kapasitas"
-                                value={room.capacity}
-                                name={`meeting_rooms[${index}][capacity]`}
-                                onChange={(e) =>
-                                    setData(
-                                        "meeting_rooms",
-                                        data.meeting_rooms.map((r, i) =>
-                                            i === index
-                                                ? {
-                                                      ...r,
-                                                      capacity: e.target.value,
-                                                  }
-                                                : r
-                                        )
-                                    )
-                                }
-                                className="w-32 border rounded p-2"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => removeMeetingRoom(index)}
-                                className="text-red-500 hover:text-red-700"
+                        {data.meeting_rooms.map((room, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center gap-3 mb-3"
                             >
-                                Hapus
-                            </button>
+                                <FormInput
+                                    label="Nama Ruang"
+                                    error={
+                                        errors[`meeting_rooms.${index}.name`]
+                                    }
+                                    name={`meeting_rooms[${index}][name]`}
+                                    value={room.name}
+                                    onChange={(e) =>
+                                        setData(
+                                            "meeting_rooms",
+                                            data.meeting_rooms.map((r, i) =>
+                                                i === index
+                                                    ? {
+                                                          ...r,
+                                                          name: e.target.value,
+                                                      }
+                                                    : r
+                                            )
+                                        )
+                                    }
+                                />
+                                <FormInput
+                                    label="Kapasitas"
+                                    error={
+                                        errors[
+                                            `meeting_rooms.${index}.capacity`
+                                        ]
+                                    }
+                                    name={`meeting_rooms[${index}][capacity]`}
+                                    value={room.capacity}
+                                    onChange={(e) =>
+                                        setData(
+                                            "meeting_rooms",
+                                            data.meeting_rooms.map((r, i) =>
+                                                i === index
+                                                    ? {
+                                                          ...r,
+                                                          capacity:
+                                                              e.target.value,
+                                                      }
+                                                    : r
+                                            )
+                                        )
+                                    }
+                                />
+                                <div className="flex self-end">
+                                    <Button
+                                        onClick={() => removeMeetingRoom(index)}
+                                        className="bg-red-500 hover:bg-red-700"
+                                    >
+                                        Hapus
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                        <div className="flex justify-between">
+                            <Button
+                                onClick={addMeetingRoom}
+                                type="button"
+                                className="!bg-light !text-dark"
+                            >
+                                + Tambah Ruang
+                            </Button>
+                            <Button type="submit" disabled={processing}>
+                                Simpan
+                            </Button>
                         </div>
-                    ))}
-                    <button
-                        type="button"
-                        onClick={addMeetingRoom}
-                        className="text-blue-600 mt-2"
-                    >
-                        + Tambah Ruang
-                    </button>
-                </div>
-
-                {/* Submit */}
-                <div>
-                    <button
-                        type="submit"
-                        disabled={processing}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                        Update
-                    </button>
-                </div>
+                    </>
+                )}
             </Form>
         </Layout>
     );
