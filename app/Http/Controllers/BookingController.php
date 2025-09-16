@@ -100,6 +100,15 @@ class BookingController extends Controller
     }
   }
 
+  public function show(Booking $booking)
+  {
+    $booking->load(['user', 'unit', 'meetingRoom', 'consumptions']);
+
+    return Inertia::render('booking/show', [
+      'booking' => $booking,
+    ]);
+  }
+
   public function destroy(Booking $booking)
   {
     $booking->delete();
