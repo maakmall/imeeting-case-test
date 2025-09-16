@@ -62,7 +62,7 @@ export default function Create() {
                             >
                                 <FormInput
                                     label="Nama Ruang"
-                                    error={errors.meeting_rooms}
+                                    error={errors[`meeting_rooms.${index}.name`]}
                                     name={`meeting_rooms[${index}][name]`}
                                     value={room.name}
                                     onChange={(e) =>
@@ -81,7 +81,7 @@ export default function Create() {
                                 />
                                 <FormInput
                                     label="Kapasitas"
-                                    error={errors.meeting_rooms}
+                                    error={errors[`meeting_rooms.${index}.capacity`]}
                                     name={`meeting_rooms[${index}][capacity]`}
                                     value={room.capacity}
                                     onChange={(e) =>
