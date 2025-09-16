@@ -56,8 +56,11 @@ export default function Index({ bookings, message }) {
                         <div className="mt-4">
                             <Button
                                 href={`/bookings/${booking.id}`}
-                                className="text-white bg-red-500 py-2 px-4 text-sm rounded-lg"
+                                className="text-white bg-red-500 hover:bg-red-600 py-2 px-4 text-sm rounded-lg"
                                 method="delete"
+                                onBefore={() => {
+                                    return confirm("Apakah anda yakin?");
+                                }}
                             >
                                 Hapus
                             </Button>

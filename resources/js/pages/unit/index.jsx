@@ -1,4 +1,4 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import Layout from "../../layouts/main";
 import Button from "../../components/button";
 import Card from "../../components/card";
@@ -56,6 +56,9 @@ export default function Index({ units, message }) {
                                         method="delete"
                                         href={`/units/${unit.id}`}
                                         className="bg-red-600 hover:bg-red-700"
+                                        onBefore={() => {
+                                            return confirm('Apakah anda yakin?')
+                                        }}
                                     >
                                         Hapus
                                     </Button>
